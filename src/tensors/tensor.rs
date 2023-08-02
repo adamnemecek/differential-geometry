@@ -3,12 +3,16 @@
 use super::variance::{Concat, Contract, Contracted, Joined, OtherIndex};
 use super::{ContravariantIndex, CovariantIndex, IndexType, TensorIndex, Variance};
 use crate::coordinates::{ConversionTo, CoordinateSystem, Point};
-use crate::typenum::consts::{B1, U2};
-use crate::typenum::uint::Unsigned;
-use crate::typenum::{Add1, Exp, Pow, Same};
+use crate::typenum::{
+    consts::{B1, U2},
+    uint::Unsigned,
+    Add1, Exp, Pow, Same,
+};
 use generic_array::{ArrayLength, GenericArray};
-use std::ops::{Add, AddAssign, Deref, DerefMut, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
-use std::ops::{Index, IndexMut};
+use std::ops::{
+    Add, AddAssign, Deref, DerefMut, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Sub,
+    SubAssign,
+};
 
 /// Struct representing a tensor.
 ///
@@ -76,7 +80,7 @@ where
         Self {
             started: false,
             dimension: dimension,
-            cur_coord: GenericArray::default(),
+            cur_coord: <_>::default(),
         }
     }
 }
@@ -173,7 +177,7 @@ where
     pub fn zero(point: Point<T>) -> Self {
         Self {
             p: point,
-            x: GenericArray::default(),
+            x: <_>::default(),
         }
     }
 
