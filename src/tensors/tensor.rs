@@ -37,8 +37,8 @@ where
     T::Dimension: Pow<U::Rank>,
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
-    fn clone(&self) -> Tensor<T, U> {
-        Tensor {
+    fn clone(&self) -> Self {
+        Self {
             p: self.p.clone(),
             x: self.x.clone(),
         }
@@ -72,8 +72,8 @@ where
     U: Variance,
     U::Rank: ArrayLength<usize>,
 {
-    pub fn new(dimension: usize) -> CoordIterator<U> {
-        CoordIterator {
+    pub fn new(dimension: usize) -> Self {
+        Self {
             started: false,
             dimension: dimension,
             cur_coord: GenericArray::default(),
@@ -170,8 +170,8 @@ where
     }
 
     /// Creates a new, zero tensor at a given point
-    pub fn zero(point: Point<T>) -> Tensor<T, V> {
-        Tensor {
+    pub fn zero(point: Point<T>) -> Self {
+        Self {
             p: point,
             x: GenericArray::default(),
         }
@@ -186,11 +186,8 @@ where
     /// the last index is the one that is changing the most often, i.e. the sequence is
     /// as follows:
     /// (0,0,...,0), (0,0,...,1), (0,0,...,2), ..., (0,0,...,1,0), (0,0,...,1,1), ... etc.
-    pub fn new(
-        point: Point<T>,
-        coords: GenericArray<f64, Exp<T::Dimension, V::Rank>>,
-    ) -> Tensor<T, V> {
-        Tensor {
+    pub fn new(point: Point<T>, coords: GenericArray<f64, Exp<T::Dimension, V::Rank>>) -> Self {
+        Self {
             p: point,
             x: coords,
         }
@@ -205,9 +202,9 @@ where
     /// the last index is the one that is changing the most often, i.e. the sequence is
     /// as follows:
     /// (0,0,...,0), (0,0,...,1), (0,0,...,2), ..., (0,0,...,1,0), (0,0,...,1,1), ... etc.
-    pub fn from_slice(point: Point<T>, slice: &[f64]) -> Tensor<T, V> {
-        assert_eq!(Tensor::<T, V>::get_num_coords(), slice.len());
-        Tensor {
+    pub fn from_slice(point: Point<T>, slice: &[f64]) -> Self {
+        assert_eq!(Self::get_num_coords(), slice.len());
+        Self {
             p: point,
             x: GenericArray::clone_from_slice(slice),
         }
