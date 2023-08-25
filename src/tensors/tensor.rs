@@ -99,7 +99,7 @@ where
         }
 
         // handle scalars
-        if self.cur_coord.len() < 1 {
+        if self.cur_coord.is_empty() {
             return None;
         }
 
@@ -357,61 +357,61 @@ impl<T: CoordinateSystem> DerefMut for Scalar<T> {
 
 // Arithmetic operations
 
-impl<T, U> AddAssign<Tensor<T, U>> for Tensor<T, U>
+impl<T, U> AddAssign for Tensor<T, U>
 where
     T: CoordinateSystem,
     U: Variance,
     T::Dimension: Pow<U::Rank>,
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
-    fn add_assign(&mut self, rhs: Tensor<T, U>) {
+    fn add_assign(&mut self, rhs: Self) {
         assert!(self.p == rhs.p);
-        for i in 0..(Tensor::<T, U>::get_num_coords()) {
+        for i in 0..(Self::get_num_coords()) {
             self[i] += rhs[i];
         }
     }
 }
 
-impl<T, U> Add<Tensor<T, U>> for Tensor<T, U>
+impl<T, U> Add for Tensor<T, U>
 where
     T: CoordinateSystem,
     U: Variance,
     T::Dimension: Pow<U::Rank>,
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
-    type Output = Tensor<T, U>;
+    type Output = Self;
 
-    fn add(mut self, rhs: Tensor<T, U>) -> Tensor<T, U> {
+    fn add(mut self, rhs: Self) -> Self {
         self += rhs;
         self
     }
 }
 
-impl<T, U> SubAssign<Tensor<T, U>> for Tensor<T, U>
+impl<T, U> SubAssign for Tensor<T, U>
 where
     T: CoordinateSystem,
     U: Variance,
     T::Dimension: Pow<U::Rank>,
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
-    fn sub_assign(&mut self, rhs: Tensor<T, U>) {
+    fn sub_assign(&mut self, rhs: Self) {
         assert!(self.p == rhs.p);
-        for i in 0..(Tensor::<T, U>::get_num_coords()) {
+        for i in 0..(Self::get_num_coords()) {
             self[i] -= rhs[i];
         }
     }
 }
 
-impl<T, U> Sub<Tensor<T, U>> for Tensor<T, U>
+impl<T, U> Sub for Tensor<T, U>
 where
     T: CoordinateSystem,
     U: Variance,
     T::Dimension: Pow<U::Rank>,
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
-    type Output = Tensor<T, U>;
+    type Output = Self;
 
-    fn sub(mut self, rhs: Tensor<T, U>) -> Tensor<T, U> {
+    fn sub(mut self, rhs: Self) -> Self {
         self -= rhs;
         self
     }
@@ -425,7 +425,7 @@ where
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
     fn mul_assign(&mut self, rhs: f64) {
-        for i in 0..(Tensor::<T, U>::get_num_coords()) {
+        for i in 0..(Self::get_num_coords()) {
             self[i] *= rhs;
         }
     }
@@ -438,9 +438,9 @@ where
     T::Dimension: Pow<U::Rank>,
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
-    type Output = Tensor<T, U>;
+    type Output = Self;
 
-    fn mul(mut self, rhs: f64) -> Tensor<T, U> {
+    fn mul(mut self, rhs: f64) -> Self {
         self *= rhs;
         self
     }
@@ -469,7 +469,7 @@ where
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
     fn div_assign(&mut self, rhs: f64) {
-        for i in 0..(Tensor::<T, U>::get_num_coords()) {
+        for i in 0..(Self::get_num_coords()) {
             self[i] /= rhs;
         }
     }
@@ -482,9 +482,9 @@ where
     T::Dimension: Pow<U::Rank>,
     Exp<T::Dimension, U::Rank>: ArrayLength<f64>,
 {
-    type Output = Tensor<T, U>;
+    type Output = Self;
 
-    fn div(mut self, rhs: f64) -> Tensor<T, U> {
+    fn div(mut self, rhs: f64) -> Self {
         self /= rhs;
         self
     }
@@ -510,7 +510,7 @@ where
 {
     type Output = Tensor<T, Joined<U, V>>;
 
-    fn mul(self, rhs: Tensor<T, V>) -> Tensor<T, Joined<U, V>> {
+    fn mul(self, rhs: Tensor<T, V>) -> Self::Output {
         assert!(self.p == rhs.p);
         let mut result = Tensor::zero(self.p.clone());
         let num_coords2 = Tensor::<T, V>::get_num_coords();
@@ -554,11 +554,11 @@ where
 {
     type Output = Tensor<T, Contracted<Joined<U, V>, Ul, Uh>>;
 
-    fn inner_product(self, rhs: Tensor<T, V>) -> Tensor<T, Contracted<Joined<U, V>, Ul, Uh>> {
+    fn inner_product(self, rhs: Tensor<T, V>) -> Self::Output {
         assert_eq!(self.p, rhs.p);
         let indexl = Ul::to_usize();
         let indexh = Uh::to_usize();
-        let num_coords_result = Tensor::<T, Contracted<Joined<U, V>, Ul, Uh>>::get_num_coords();
+        let num_coords_result = Self::Output::get_num_coords();
         let u_rank = U::Rank::to_usize();
         let v_rank = V::Rank::to_usize();
         let dim = T::Dimension::to_usize();
