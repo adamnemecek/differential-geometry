@@ -39,13 +39,13 @@ where
     T: CoordinateSystem,
 {
     /// Creates a new point with coordinates described by the array
-    pub fn new(coords: GenericArray<f64, T::Dimension>) -> Point<T> {
-        Point { x: coords }
+    pub fn new(coords: GenericArray<f64, T::Dimension>) -> Self {
+        Self { x: coords }
     }
 
     /// Creates a new point with coordinates passed in the slice
-    pub fn from_slice(coords: &[f64]) -> Point<T> {
-        Point {
+    pub fn from_slice(coords: &[f64]) -> Self {
+        Self {
             x: GenericArray::clone_from_slice(coords),
         }
     }
@@ -60,8 +60,8 @@ impl<T> Clone for Point<T>
 where
     T: CoordinateSystem,
 {
-    fn clone(&self) -> Point<T> {
-        Point::new(self.x.clone())
+    fn clone(&self) -> Self {
+        Self::new(self.x.clone())
     }
 }
 
@@ -92,11 +92,11 @@ where
     }
 }
 
-impl<T> PartialEq<Point<T>> for Point<T>
+impl<T> PartialEq for Point<T>
 where
     T: CoordinateSystem,
 {
-    fn eq(&self, rhs: &Point<T>) -> bool {
+    fn eq(&self, rhs: &Self) -> bool {
         (0..T::dimension()).all(|i| self[i] == rhs[i])
     }
 }

@@ -79,7 +79,7 @@ where
     pub fn new(dimension: usize) -> Self {
         Self {
             started: false,
-            dimension: dimension,
+            dimension,
             cur_coord: <_>::default(),
         }
     }
@@ -514,7 +514,7 @@ where
         assert!(self.p == rhs.p);
         let mut result = Tensor::zero(self.p.clone());
         let num_coords2 = Tensor::<T, V>::get_num_coords();
-        let num_coords_result = Tensor::<T, Joined<U, V>>::get_num_coords();
+        let num_coords_result = Self::Output::get_num_coords();
         for coord in 0..num_coords_result {
             let coord1 = coord / num_coords2;
             let coord2 = coord % num_coords2;
@@ -563,7 +563,7 @@ where
         let v_rank = V::Rank::to_usize();
         let dim = T::Dimension::to_usize();
 
-        let mut result = Tensor::<T, Contracted<Joined<U, V>, Ul, Uh>>::zero(self.p.clone());
+        let mut result = Self::Output::zero(self.p.clone());
         let (modl, modh, modv) = match (indexl < u_rank, indexh < u_rank) {
             (true, true) => (
                 dim.pow((u_rank - 2 - indexl) as u32),
@@ -626,7 +626,7 @@ where
             )
         };
 
-        let templates: &Fn(usize) -> (usize, usize, usize, usize) =
+        let templates: &dyn Fn(usize) -> (usize, usize, usize, usize) =
             match (indexl < u_rank, indexh < u_rank) {
                 (false, false) => &to_templates_both2,
                 (true, false) => &to_templates,
